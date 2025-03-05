@@ -100,12 +100,24 @@ mod tests;
 pub enum Cmp {
     /// Returns 1 if first value is less than second, respecting signedness
     Slt,
+    /// Returns 1 if first value is greater than or equal to second, respecting signedness
+    /// (floating point)
+    Lt,
     /// Returns 1 if first value is less than or equal to second, respecting signedness
     Sle,
+    /// Returns 1 if first value is greater than or equal to second, respecting signedness
+    /// (floating point)
+    Le,
     /// Returns 1 if first value is greater than second, respecting signedness
     Sgt,
     /// Returns 1 if first value is greater than or equal to second, respecting signedness
+    /// (floating point)
+    Gt,
+    /// Returns 1 if first value is greater than or equal to second, respecting signedness
     Sge,
+    /// Returns 1 if first value is greater than or equal to second, respecting signedness
+    /// (floating point)
+    Ge,
     /// Returns 1 if values are equal
     Eq,
     /// Returns 1 if values are not equal
@@ -122,6 +134,29 @@ pub enum Cmp {
     Ugt,
     /// Returns 1 if first value is greater than or equal to second, unsigned comparison
     Uge,
+}
+
+impl fmt::Display for Cmp {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Cmp::Slt => write!(f, "slt"),
+            Cmp::Lt => write!(f, "lt"),
+            Cmp::Sle => write!(f, "sle"),
+            Cmp::Le => write!(f, "le"),
+            Cmp::Sgt => write!(f, "sgt"),
+            Cmp::Gt => write!(f, "gt"),
+            Cmp::Sge => write!(f, "sge"),
+            Cmp::Ge => write!(f, "ge"),
+            Cmp::Eq => write!(f, "eq"),
+            Cmp::Ne => write!(f, "ne"),
+            Cmp::O => write!(f, "o"),
+            Cmp::Uo => write!(f, "uo"),
+            Cmp::Ult => write!(f, "ult"),
+            Cmp::Ule => write!(f, "ule"),
+            Cmp::Ugt => write!(f, "ugt"),
+            Cmp::Uge => write!(f, "uge"),
+        }
+    }
 }
 
 /// QBE instructions representing operations in the intermediate language.
@@ -316,27 +351,7 @@ impl fmt::Display for Instr<'_> {
                     "Cannot compare aggregate types"
                 );
 
-                write!(
-                    f,
-                    "c{}{} {}, {}",
-                    match cmp {
-                        Cmp::Slt => "slt",
-                        Cmp::Sle => "sle",
-                        Cmp::Sgt => "sgt",
-                        Cmp::Sge => "sge",
-                        Cmp::Eq => "eq",
-                        Cmp::Ne => "ne",
-                        Cmp::O => "o",
-                        Cmp::Uo => "uo",
-                        Cmp::Ult => "ult",
-                        Cmp::Ule => "ule",
-                        Cmp::Ugt => "ugt",
-                        Cmp::Uge => "uge",
-                    },
-                    ty,
-                    lhs,
-                    rhs,
-                )
+                write!(f, "c{}{} {}, {}", cmp, ty, lhs, rhs,)
             }
             Self::And(lhs, rhs) => write!(f, "and {}, {}", lhs, rhs),
             Self::Or(lhs, rhs) => write!(f, "or {}, {}", lhs, rhs),
